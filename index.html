@@ -16,6 +16,7 @@
     <input type="button" id="month" value="">
     <input type="button" id="next" value=">">
     <input type="button" id="line" value="共有する">
+    <input type="button" id="config" value="設定">
   </div>
 
   <div id="input_plan_area">
@@ -42,7 +43,13 @@
 
 <div id="image"></div>
 
-<div id="footer"></div>
+<div id="config_page">
+</div>
+
+<div id="footer">
+  <div class="buttons">
+  </div>
+</div>
 
 <script src="lib/html2canvas.min.js"></script>
 <script type="text/javascript">
@@ -134,14 +141,14 @@ var showInputArea = function(d){
                                                       +(date.getMonth()+1) + "月"
                                                       +d+"日>";
   document.getElementById("input_plan_area").style.display = "inline";
-  document.getElementById("content").style.top = "380px";
+  document.getElementById("content").style.top = "414px";
 }
 
 var hideInputArea = function(){
   addDate = null;
   document.getElementById("input_plan").value = "";
   document.getElementById("input_plan_area").style.display = "none";
-  document.getElementById("content").style.top = "120px";
+  document.getElementById("content").style.top = "154px";
 }
 
 // toggleCheck(key)
