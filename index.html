@@ -59,6 +59,7 @@
 </div>
 
 <script src="lib/html2canvas.min.js"></script>
+<script src="lib/lib.js"></script>
 <script type="text/javascript">
 
 
@@ -71,14 +72,14 @@ var login = storage.getItem("username");
 if(login == null || login == ""){
 
 }else {
-  document.getElementById("login").style.display = "none";
-  document.getElementById("content").style.display = "inline";
+  Lib.hide("login");
+  Lib.show("content");
 }
 var weekStr = ["日", "月", "火", "水", "木", "金", "土"];
 
 var showContent = function(){
-  document.getElementById("image").style.display = "none";
-  document.getElementById("content").style.display = "inline";
+  Lib.hide("image");
+  Lib.show("content");
 }
 
 var makeKey = function(d){
@@ -131,7 +132,7 @@ var addPlan = function(){
   if(d == null) return ;
 
   var key = year + "." + month + "." + d;
-  var plan = document.getElementById("input_plan").value;
+  var plan = Lib.value("input_plan");
   if(plan != "" && plan != null){
     var data = storage.getItem(key);
     if(data != "" && data != null){
@@ -151,14 +152,14 @@ var showInputArea = function(d){
   document.getElementById("add_plan_date").innerHTML = date.getFullYear() + "年"
                                                       +(date.getMonth()+1) + "月"
                                                       +d+"日>";
-  document.getElementById("input_plan_area").style.display = "inline";
+  Lib.show("input_plan_area");
   document.getElementById("content").style.top = "380px";
 }
 
 var hideInputArea = function(){
   addDate = null;
-  document.getElementById("input_plan").value = "";
-  document.getElementById("input_plan_area").style.display = "none";
+  Lib.value("input_plan", "");
+  Lib.hide("input_plan_area");
   document.getElementById("content").style.top = "120px";
 }
 
@@ -178,7 +179,7 @@ var showCalendar = function(){
   var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
   list.innerHTML = "";
-  document.getElementById("month").value = (d.getMonth() + 1) + "月";
+  Lib.value("month", (d.getMonth() + 1) + "月");
   for(var i = 0, sd = new Date(date.getFullYear(), date.getMonth(), 1); i < d.getDate(); i++, sd.setDate(sd.getDate()+1)){
     var listData = "<div class='li'>" + (i + 1) + " (" + weekStr[sd.getDate() % 7] + ")";
     var data = storage.getItem(makeKey(sd));
@@ -245,8 +246,8 @@ document.getElementById("line").onclick = function(){
 
   }
 
-  document.getElementById("content").style.display = "none";
-  document.getElementById("image").style.display = "inline";
+  Lib.hide("content");
+  Lib.show("image");
   document.getElementById("image").innerHTML = file;
   html2canvas(document.getElementById("image")).then(canvas => {
     var data = canvas.toDataURL();
@@ -263,34 +264,34 @@ document.getElementById("submit").onclick = function(){
 };
 
 document.getElementById("cancel").onclick = function(){
-  document.getElementById("input_plan").value = "";
+  Lib.value("input_plan", "");
   hideInputArea();
 };
 
 document.getElementById("username_submit").onclick = function(){
-  var login = document.getElementById("username").value;
+  var login = Lib.value("username");
   if(login == "" || login == null) alert("名前を入力してください");
   else {
 
     storage.setItem("username", login);
 
-    document.getElementById("login").style.display = "none";
-    document.getElementById("content").style.display = "inline";
+    Lib.hide("login");
+    Lib.show("content");
   }
 };
 
 document.getElementById("config").onclick = function(){
-  document.getElementById("config_page_username").value = storage.getItem("username");
+  Lib.value("config_page_username", storage.getItem("username"));
   // 表示、非表示
-  document.getElementById("content").style.display = "none";
-  document.getElementById("login").style.display = "none";
-  document.getElementById("image").style.display = "none";
-  document.getElementById("config_page").style.display = "inline";
+  Lib.hide("content");
+  Lib.hide("login");
+  Lib.hide("image");
+  Lib.show("config_page");
 };
 
 document.getElementById("config_page_close").onclick = function(){
-  document.getElementById("config_page").style.display = "none";
-  document.getElementById("content").style.display = "inline";
+  Lib.hide("config_page");
+  Lib.show("content");
 };
 
 document.getElementById("config_page_all_delete").onclick = function(){
@@ -301,7 +302,7 @@ document.getElementById("config_page_all_delete").onclick = function(){
 };
 
 document.getElementById("config_page_change_username").onclick = function(){
-  var username = document.getElementById("config_page_username").value;
+  var username = Lib.value("config_page_username");
   if(storage.getItem("username") != username){
     if(username != "" && username != null){
       if(confirm("ユーザー名を" + username + "に変更しますか?")){
