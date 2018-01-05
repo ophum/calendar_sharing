@@ -44,6 +44,13 @@
 <div id="image"></div>
 
 <div id="config_page">
+  <input id="config_page_close" type="button" value="とじる">
+  ユーザー名
+  <input id="config_page_username" type="text" placeholder="ユーザー名">
+  <input id="config_page_change_username" type="button" value="名前を変える">
+  <br>
+  <br>
+  <input id="config_page_all_delete" type="button" value="データをすべて削除する">
 </div>
 
 <div id="footer">
@@ -104,7 +111,11 @@ var delPlan = function(c){
     }
   }
 
-  storage.setItem(key, new_data);
+  if(new_data == ""){
+    storage.removeItem(key);
+  }else {
+    storage.setItem(key, new_data);
+  }
   checked = {};
   showCalendar();
 };
@@ -141,14 +152,14 @@ var showInputArea = function(d){
                                                       +(date.getMonth()+1) + "月"
                                                       +d+"日>";
   document.getElementById("input_plan_area").style.display = "inline";
-  document.getElementById("content").style.top = "414px";
+  document.getElementById("content").style.top = "380px";
 }
 
 var hideInputArea = function(){
   addDate = null;
   document.getElementById("input_plan").value = "";
   document.getElementById("input_plan_area").style.display = "none";
-  document.getElementById("content").style.top = "154px";
+  document.getElementById("content").style.top = "120px";
 }
 
 // toggleCheck(key)
@@ -211,7 +222,9 @@ document.getElementById("line").onclick = function(){
     return;
   }
   // ✔のついた予定を取り出す
-  var file = '<h2>' + login + ' の ' + date.getFullYear() + '年' + (date.getMonth() + 1) + '月 予定</h2>';
+  var file = '<h2>' + login + ' の ' +
+              date.getFullYear() + '年' +
+             (date.getMonth() + 1) + '月 予定</h2>';
 
   file += '<div id="list">';
   for(var j = 1, sd = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -247,12 +260,12 @@ document.getElementById("line").onclick = function(){
 document.getElementById("submit").onclick = function(){
   addPlan();
   hideInputArea();
-}
+};
 
 document.getElementById("cancel").onclick = function(){
   document.getElementById("input_plan").value = "";
   hideInputArea();
-}
+};
 
 document.getElementById("username_submit").onclick = function(){
   var login = document.getElementById("username").value;
@@ -264,8 +277,39 @@ document.getElementById("username_submit").onclick = function(){
     document.getElementById("login").style.display = "none";
     document.getElementById("content").style.display = "inline";
   }
-}
+};
 
+document.getElementById("config").onclick = function(){
+  document.getElementById("config_page_username").value = storage.getItem("username");
+  // 表示、非表示
+  document.getElementById("content").style.display = "none";
+  document.getElementById("login").style.display = "none";
+  document.getElementById("image").style.display = "none";
+  document.getElementById("config_page").style.display = "inline";
+};
+
+document.getElementById("config_page_close").onclick = function(){
+  document.getElementById("config_page").style.display = "none";
+  document.getElementById("content").style.display = "inline";
+};
+
+document.getElementById("config_page_all_delete").onclick = function(){
+  var username = storage.getItem("username");
+  storage.clear();
+  storage.setItem("username", username);
+  showCalendar();
+};
+
+document.getElementById("config_page_change_username").onclick = function(){
+  var username = document.getElementById("config_page_username").value;
+  if(storage.getItem("username") != username){
+    if(username != "" && username != null){
+      if(confirm("ユーザー名を" + username + "に変更しますか?")){
+        storage.setItem("username", username);
+      }
+    }
+  }
+}
 showCalendar();
 
 </script>
