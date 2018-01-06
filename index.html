@@ -180,8 +180,9 @@ var showCalendar = function(){
 
   list.innerHTML = "";
   Lib.setValue("month", (d.getMonth() + 1) + "月");
+
   for(var i = 0, sd = new Date(date.getFullYear(), date.getMonth(), 1); i < d.getDate(); i++, sd.setDate(sd.getDate()+1)){
-    var listData = "<div class='li'>" + (i + 1) + " (" + weekStr[sd.getDate() % 7] + ")";
+    var listData = "<div class='li'>" + (i + 1) + " (" + weekStr[sd.getDay() % 7] + ")";
     var data = storage.getItem(makeKey(sd));
     if(data != null){
       data = data.split(",");
