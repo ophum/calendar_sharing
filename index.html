@@ -39,6 +39,11 @@
 <div id="content">
   <div id="list">
   </div>
+
+  <div id="monthly">
+  </div>
+  <div id="detail">
+  </div>
 </div>
 
 <div id="image"></div>
@@ -202,6 +207,27 @@ var showCalendar = function(){
   }
 };
 
+var showMonthlyCalendar = function(){
+  var monthly = document.getElementById("monthly");
+  var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  monthly.innerHTML = "";
+  Lib.setValue("month", (d.getMonth() + 1) + "月");
+
+  var sd = new Date(date.getFullYear(), date.getMonth(), 1);
+  var day = sd.getDay();
+
+  for(var i = 0; i < day; i++){
+    monthly.innerHTML += "<div class='li'></div>";
+  }
+
+  for(var i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)){
+    monthly.innerHTML += "<div class='li'>" + (i + 1) + "</div>";
+    if(weekStr[sd.getDay()] == "土"){ monthly.innerHTML += "</br>"; }
+  }
+
+};
+
 document.getElementById("prev").onclick = function(){
   date.setMonth(date.getMonth() - 1);
   showCalendar();
@@ -311,7 +337,7 @@ document.getElementById("config_page_change_username").onclick = function(){
     }
   }
 }
-showCalendar();
+showMonthlyCalendar();
 
 </script>
 </body>
