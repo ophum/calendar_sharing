@@ -39,6 +39,11 @@
 <div id="content">
   <div id="list">
   </div>
+
+  <div id="monthly">
+  </div>
+  <div id="detail">
+  </div>
 </div>
 
 <div id="image"></div>
@@ -48,6 +53,8 @@
   ユーザー名
   <input id="config_page_username" type="text" placeholder="ユーザー名">
   <input id="config_page_change_username" type="button" value="名前を変える">
+
+  <input id="config_page_calendar_style" type="button" value="月表示にする(現在リスト表示)">
   <br>
   <br>
   <input id="config_page_all_delete" type="button" value="データをすべて削除する">
@@ -68,7 +75,13 @@ var storage = localStorage;
 var addPlanDate;
 var checked = {};
 var login = storage.getItem("username");
+var calendar_style = storage.getItem("calendar_style");
 
+if(calendar_style == "list" || calendar_style == null){
+  Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
+}else {
+  Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
+}
 if(login == null || login == ""){
 
 }else {
@@ -175,6 +188,25 @@ var toggleCheck = function(key){
 // showCalendar()
 // DOMのdiv#contentにカレンダーを表示
 var showCalendar = function(){
+  switch(calendar_style){
+  case null:
+    storage.setItem("calendar_style", "list");
+  case "list":
+    Lib.hide("monthly");
+    Lib.hide("detail");
+    Lib.show("list");
+    showListCalnedar();
+    break;
+  case "monthly":
+    Lib.hide("list");
+    Lib.show("monthly");
+    Lib.show("detail");
+    showMonthlyCalendar();
+    break;
+  }
+};
+
+var showListCalnedar = function(){
   var list = document.getElementById("list");
   var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -200,6 +232,50 @@ var showCalendar = function(){
     listData += "<p><input type='button' value='予定を追加する' onclick='showInputArea(" + (i + 1) + ")'></p></div>";
     list.innerHTML += listData;
   }
+};
+
+var showMonthlyCalendar = function(){
+  var monthly = document.getElementById("monthly");
+  var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  monthly.innerHTML = "";
+  Lib.setValue("month", (d.getMonth() + 1) + "月");
+
+  var sd = new Date(date.getFullYear(), date.getMonth(), 1);
+  var day = sd.getDay();
+
+  for(var i = 0; i < day; i++){
+    monthly.innerHTML += "<div class='li'></div>";
+  }
+
+  for(var i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)){
+    monthly.innerHTML += "<div class='li' onclick='showDetail(\"" + makeKey(sd) + "\")'>" + (i + 1) + "</div>";
+    if(weekStr[sd.getDay()] == "土"){ monthly.innerHTML += "</br>"; }
+  }
+
+};
+
+var showDetail = function(k){
+  var detail = document.getElementById("detail");
+  var listData = "<div class='li'>";
+  var d = (k.split("."))[2];
+  var data = storage.getItem(k);
+  if(data != null){
+    data = data.split(",");
+    for(var s in data){
+      if(data[s] == "") continue;
+      var key = k + "-" + s;
+      if(!(key in checked)){
+        checked[key] = -1;
+      }
+      listData += "<div class='plan'><input class='btn' onclick='toggleCheck(\""+ key +"\")' type='checkbox'" + (checked[key] == -1 ? "checked" : "") + ">"
+                + "<div onclick='delPlan(\"" + key + "\")'>" + data[s] + "</div></div>";
+
+    }
+  }
+  listData += "<p><input type='button' value='予定を追加する' onclick='showInputArea(" + d + ")'></p></div>";
+  detail.innerHTML = listData;
+
 };
 
 document.getElementById("prev").onclick = function(){
@@ -310,6 +386,20 @@ document.getElementById("config_page_change_username").onclick = function(){
       }
     }
   }
+}
+
+document.getElementById("config_page_calendar_style").onclick = function(){
+  var style = Lib.getValue("config_page_calendar_style");
+
+  if(style == "月表示にする(現在リスト表示)"){
+    calendar_style = "monthly";
+    Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
+  }else {
+    calendar_style = "list";
+    Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
+  }
+  storage.setItem("calendar_style", calendar_style);
+  showCalendar();
 }
 showCalendar();
 
