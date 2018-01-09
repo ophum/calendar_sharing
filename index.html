@@ -222,9 +222,32 @@ var showMonthlyCalendar = function(){
   }
 
   for(var i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)){
-    monthly.innerHTML += "<div class='li'>" + (i + 1) + "</div>";
+    monthly.innerHTML += "<div class='li' onclick='showDetail(\"" + makeKey(sd) + "\")'>" + (i + 1) + "</div>";
     if(weekStr[sd.getDay()] == "土"){ monthly.innerHTML += "</br>"; }
   }
+
+};
+
+var showDetail = function(k){
+  var detail = document.getElementById("detail");
+  var listData = "<div class='li'>";
+  var d = (k.split("."))[2];
+  var data = storage.getItem(k);
+  if(data != null){
+    data = data.split(",");
+    for(var s in data){
+      if(data[s] == "") continue;
+      var key = k + "-" + s;
+      if(!(key in checked)){
+        checked[key] = -1;
+      }
+      listData += "<div class='plan'><input class='btn' onclick='toggleCheck(\""+ key +"\")' type='checkbox'" + (checked[key] == -1 ? "checked" : "") + ">"
+                + "<div onclick='delPlan(\"" + key + "\")'>" + data[s] + "</div></div>";
+
+    }
+  }
+  listData += "<p><input type='button' value='予定を追加する' onclick='showInputArea(" + d + ")'></p></div>";
+  detail.innerHTML = listData;
 
 };
 
