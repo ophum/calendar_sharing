@@ -18,7 +18,7 @@
 }
 
 #content, #config_page{
-  width: 100%;
+  width: 360px;
   height: auto;
   top: 120px;
   position: relative;
@@ -29,6 +29,10 @@
   width: 360px;
   height: 260px;
 
+  left: 0;
+  top: 120px;
+  position: fixed;
+  display: none;
 }
 
 #monthly .li{
@@ -45,6 +49,9 @@
   width: 360px;
   height: calc(100% - 380px);
   overflow-y: scroll;
+  left: 0;
+  top: 400px;
+  position: fixed;
 }
 #image{
   width: 100%;

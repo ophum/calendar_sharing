@@ -53,6 +53,8 @@
   ユーザー名
   <input id="config_page_username" type="text" placeholder="ユーザー名">
   <input id="config_page_change_username" type="button" value="名前を変える">
+
+  <input id="config_page_calendar_style" type="button" value="月表示にする(現在リスト表示)">
   <br>
   <br>
   <input id="config_page_all_delete" type="button" value="データをすべて削除する">
@@ -73,7 +75,13 @@ var storage = localStorage;
 var addPlanDate;
 var checked = {};
 var login = storage.getItem("username");
+var calendar_style = storage.getItem("calendar_style");
 
+if(calendar_style == "list" || calendar_style == null){
+  Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
+}else {
+  Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
+}
 if(login == null || login == ""){
 
 }else {
@@ -180,6 +188,25 @@ var toggleCheck = function(key){
 // showCalendar()
 // DOMのdiv#contentにカレンダーを表示
 var showCalendar = function(){
+  switch(calendar_style){
+  case null:
+    storage.setItem("calendar_style", "list");
+  case "list":
+    Lib.hide("monthly");
+    Lib.hide("detail");
+    Lib.show("list");
+    showListCalnedar();
+    break;
+  case "monthly":
+    Lib.hide("list");
+    Lib.show("monthly");
+    Lib.show("detail");
+    showMonthlyCalendar();
+    break;
+  }
+};
+
+var showListCalnedar = function(){
   var list = document.getElementById("list");
   var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -360,7 +387,21 @@ document.getElementById("config_page_change_username").onclick = function(){
     }
   }
 }
-showMonthlyCalendar();
+
+document.getElementById("config_page_calendar_style").onclick = function(){
+  var style = Lib.getValue("config_page_calendar_style");
+
+  if(style == "月表示にする(現在リスト表示)"){
+    calendar_style = "monthly";
+    Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
+  }else {
+    calendar_style = "list";
+    Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
+  }
+  storage.setItem("calendar_style", calendar_style);
+  showCalendar();
+}
+showCalendar();
 
 </script>
 </body>
