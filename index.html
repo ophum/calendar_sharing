@@ -273,24 +273,24 @@ const showDetail = function(k) {
 
 };
 
-document.getElementById("prev").onclick = function(){
+document.getElementById("prev").addEventListener("click", () => {
   date.setMonth(date.getMonth() - 1);
   showCalendar();
-};
+});
 
-document.getElementById("next").onclick = function(){
+document.getElementById("next").addEventListener("click", () => {
   date.setMonth(date.getMonth() + 1);
   showCalendar();
-};
+});
 
-document.getElementById("month").onclick = function(){
+document.getElementById("month").addEventListener("click", () => {
   const m = prompt(date.getFullYear() + "年 何月を表示しますか?", date.getMonth() + 1);
   date.setMonth(m - 1);
   showCalendar();
-};
+});
 
 // 予定をLINEで送る
-document.getElementById("line").onclick = function(){
+document.getElementById("line").addEventListener("click", () => {
   var username = storage.getItem("username");
   // ✔のついた予定を取り出す
   var file = '<h2>' + username + ' の ' +
@@ -328,19 +328,19 @@ document.getElementById("line").onclick = function(){
               "<img width='360' src='" + data + "'>";
   });
 
-};
+});
 
-document.getElementById("submit").onclick = function(){
+document.getElementById("submit").addEventListener("click", () => {
   addPlan();
   hideInputArea();
-};
+});
 
-document.getElementById("cancel").onclick = function(){
+document.getElementById("cancel").addEventListener("click", () => {
   Lib.setValue("input_plan", "");
   hideInputArea();
-};
+});
 
-document.getElementById("username_submit").onclick = function(){
+document.getElementById("username_submit").addEventListener("click", () => {
   const login = Lib.getValue("username");
   if(login == "" || login == null) alert("名前を入力してください");
   else {
@@ -349,9 +349,9 @@ document.getElementById("username_submit").onclick = function(){
     Lib.hide("login");
     Lib.show("content");
   }
-};
+});
 
-document.getElementById("config").onclick = function(){
+document.getElementById("config").addEventListener("click", () => {
   Lib.setValue("config_page_username", storage.getItem("username"));
   // 表示、非表示
   Lib.hide("content");
@@ -359,21 +359,21 @@ document.getElementById("config").onclick = function(){
   Lib.hide("image");
   hideInputArea();
   Lib.show("config_page");
-};
+});
 
-document.getElementById("config_page_close").onclick = function(){
+document.getElementById("config_page_close").addEventListener("click", () => {
   Lib.hide("config_page");
   Lib.show("content");
-};
+});
 
-document.getElementById("config_page_all_delete").onclick = function(){
+document.getElementById("config_page_all_delete").addEventListener("click", () => {
   const username = storage.getItem("username");
   storage.clear();
   storage.setItem("username", username);
   showCalendar();
-};
+});
 
-document.getElementById("config_page_change_username").onclick = function(){
+document.getElementById("config_page_change_username").addEventListener("click", () => {
   const username = Lib.getValue("config_page_username");
   if (storage.getItem("username") != username) {
     if (username != "" && username != null) {
@@ -382,9 +382,9 @@ document.getElementById("config_page_change_username").onclick = function(){
       }
     }
   }
-}
+});
 
-document.getElementById("config_page_calendar_style").onclick = function(){
+document.getElementById("config_page_calendar_style").addEventListener("click", () => {
   var style = Lib.getValue("config_page_calendar_style");
 
   if (style == "月表示にする(現在リスト表示)") {
@@ -397,7 +397,7 @@ document.getElementById("config_page_calendar_style").onclick = function(){
 
   storage.setItem("calendar_style", calendar_style);
   showCalendar();
-}
+});
 
 showCalendar();
 
