@@ -73,7 +73,6 @@
 <script src="lib/lib.js"></script>
 <script type="text/javascript">
 
-
 var date = new Date();
 const storage = localStorage;
 let addPlanDate;
@@ -81,14 +80,15 @@ var checked = {};
 var login = storage.getItem("username");
 var calendar_style = storage.getItem("calendar_style");
 
-if(calendar_style == "list" || calendar_style == null){
+if (calendar_style == "list" || calendar_style == null) {
   Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
-}else {
+} else {
   Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
 }
-if(login == null || login == ""){
 
-}else {
+if (login == null || login == "") {
+
+} else {
   Lib.hide("login");
   Lib.show("content");
 }
@@ -117,22 +117,18 @@ const delPlan = function(c) {
   var data = storage.getItem(key);
   data = data.split(",");
 
-  if(!confirm(key + "の予定: " + data[num] + "を削除しますか?")){
-    return;
-  }
+  if (!confirm(key + "の予定: " + data[num] + "を削除しますか?")) return;
+  
   var new_data = "";
-    if(i == num) continue;
-    if(new_data == ""){
-      new_data = data[i];
-    }else {
-      new_data += "," + data[i];
-    }
+
   for (let i in data) {
+    if (i == num) continue;
+    new_data = (new_data == "") ? data[i] : new_data + "," + data[i];
   }
 
-  if(new_data == ""){
+  if (new_data == "") {
     storage.removeItem(key);
-  }else {
+  } else {
     storage.setItem(key, new_data);
   }
   checked = {};
@@ -147,21 +143,17 @@ const addPlan = function() {
   var month = date.getMonth() + 1;
   var d = addPlanDate;
 
-  if(d == null) return ;
+  if (d == null) return;
 
   var key = year + "." + month + "." + d;
   var plan = Lib.getValue("input_plan");
 	var from = Lib.getValue("from_time");
 	var to = Lib.getValue("to_time");
 	
-	if(!(from == "" && to == "")) plan = from + "-" + to + " " + plan;
-  if(plan != "" && plan != null){
-    var data = storage.getItem(key);
-    if(data != "" && data != null){
-      data += "," + plan;
-    }else {
-      data = plan;
-    }
+	if (!(from == "" && to == "")) plan = from + "-" + to + " " + plan;
+  if (plan != "" && plan != null) {
+    let data = storage.getItem(key);
+    data = (data != "" && data != null) ? data + "," + plan : plan;
     storage.setItem(key, data);
     alert("予定を追加しました");
   }
@@ -196,22 +188,22 @@ const toggleCheck = function(key) {
 
 // showCalendar()
 // DOMのdiv#contentにカレンダーを表示
-  switch(calendar_style){
-  case null:
-    storage.setItem("calendar_style", "list");
-  case "list":
-    Lib.hide("monthly");
-    Lib.hide("detail");
-    Lib.show("list");
-    showListCalnedar();
-    break;
-  case "monthly":
-    Lib.hide("list");
-    Lib.show("monthly");
-    Lib.show("detail");
-    showMonthlyCalendar();
-    break;
 const showCalendar = function() {
+  switch (calendar_style) {
+    case null:
+      storage.setItem("calendar_style", "list");
+    case "list":
+      Lib.hide("monthly");
+      Lib.hide("detail");
+      Lib.show("list");
+      showListCalnedar();
+      break;
+    case "monthly":
+      Lib.hide("list");
+      Lib.show("monthly");
+      Lib.show("detail");
+      showMonthlyCalendar();
+      break;
   }
 };
 
@@ -225,14 +217,12 @@ const showListCalnedar = function() {
   for (let i = 0, sd = new Date(date.getFullYear(), date.getMonth(), 1); i < d.getDate(); i++, sd.setDate(sd.getDate()+1)) {
     var listData = "<div class='li'>" + (i + 1) + " (" + weekStr[sd.getDay() % 7] + ")";
     var data = storage.getItem(makeKey(sd));
-    if(data != null){
+    if (data != null) {
       data = data.split(",");
-        if(data[s] == "") continue;
       for (let s in data) {
+        if (data[s] == "") continue;
         var key = makeKey(sd) + "-" + s;
-        if(!(key in checked)){
-          checked[key] = -1;
-        }
+        if (!(key in checked)) checked[key] = -1;
         listData += "<div class='plan'><input class='btn' onclick='toggleCheck(\""+ key +"\")' type='checkbox'" + (checked[key] == -1 ? "checked" : "") + ">"
                   + "<div onclick='delPlan(\"" + makeKey(sd) + "-" + s + "\")'>" + data[s] + "</div></div>";
 
@@ -255,9 +245,9 @@ const showMonthlyCalendar = function() {
 
   for (let i = 0; i < day; i++) monthly.innerHTML += "<div class='li'></div>";
 
-  for(var i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)){
+  for (let i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)) {
     monthly.innerHTML += "<div class='li' onclick='showDetail(\"" + makeKey(sd) + "\")'>" + (i + 1) + "</div>";
-    if(weekStr[sd.getDay()] == "土"){ monthly.innerHTML += "</br>"; }
+    if (weekStr[sd.getDay()] == "土") monthly.innerHTML += "</br>";
   }
 
 };
@@ -267,14 +257,12 @@ const showDetail = function(k) {
   var listData = "<div class='li'>";
   var d = (k.split("."))[2];
   var data = storage.getItem(k);
-  if(data != null){
+  if (data != null) {
     data = data.split(",");
-      if(data[s] == "") continue;
     for (let s in data) {
+      if (data[s] == "") continue;
       var key = k + "-" + s;
-      if(!(key in checked)){
-        checked[key] = -1;
-      }
+      if (!(key in checked)) checked[key] = -1;
       listData += "<div class='plan'><input class='btn' onclick='toggleCheck(\""+ key +"\")' type='checkbox'" + (checked[key] == -1 ? "checked" : "") + ">"
                 + "<div onclick='delPlan(\"" + key + "\")'>" + data[s] + "</div></div>";
 
@@ -354,7 +342,6 @@ document.getElementById("username_submit").onclick = function(){
   const login = Lib.getValue("username");
   if(login == "" || login == null) alert("名前を入力してください");
   else {
-
     storage.setItem("username", login);
 
     Lib.hide("login");
@@ -385,10 +372,10 @@ document.getElementById("config_page_all_delete").onclick = function(){
 };
 
 document.getElementById("config_page_change_username").onclick = function(){
-  if(storage.getItem("username") != username){
-    if(username != "" && username != null){
-      if(confirm("ユーザー名を" + username + "に変更しますか?")){
   const username = Lib.getValue("config_page_username");
+  if (storage.getItem("username") != username) {
+    if (username != "" && username != null) {
+      if (confirm("ユーザー名を" + username + "に変更しますか?")) {
         storage.setItem("username", username);
       }
     }
@@ -398,16 +385,18 @@ document.getElementById("config_page_change_username").onclick = function(){
 document.getElementById("config_page_calendar_style").onclick = function(){
   var style = Lib.getValue("config_page_calendar_style");
 
-  if(style == "月表示にする(現在リスト表示)"){
+  if (style == "月表示にする(現在リスト表示)") {
     calendar_style = "monthly";
     Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
-  }else {
+  } else {
     calendar_style = "list";
     Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
   }
+
   storage.setItem("calendar_style", calendar_style);
   showCalendar();
 }
+
 showCalendar();
 
 </script>
