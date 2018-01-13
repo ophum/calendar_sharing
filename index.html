@@ -73,33 +73,34 @@
 <script src="lib/lib.js"></script>
 <script type="text/javascript">
 
-
 var date = new Date();
-var storage = localStorage;
-var addPlanDate;
+const storage = localStorage;
+let addPlanDate;
 var checked = {};
 var login = storage.getItem("username");
 var calendar_style = storage.getItem("calendar_style");
 
-if(calendar_style == "list" || calendar_style == null){
+if (calendar_style == "list" || calendar_style == null) {
   Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
-}else {
+} else {
   Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
 }
-if(login == null || login == ""){
 
-}else {
+if (login == null || login == "") {
+
+} else {
   Lib.hide("login");
   Lib.show("content");
 }
-var weekStr = ["日", "月", "火", "水", "木", "金", "土"];
 
-var showContent = function(){
+const weekStr = ["日", "月", "火", "水", "木", "金", "土"];
+
+const showContent = function() {
   Lib.hide("image");
   Lib.show("content");
-}
+};
 
-var makeKey = function(d){
+const makeKey = function(d) {
   return d.getFullYear() + "." + (d.getMonth() + 1) + "." + d.getDate();
 };
 
@@ -108,7 +109,7 @@ var makeKey = function(d){
 // ストレージから予定を削除
 // 引数のcには "-" を区切りとしたデータが渡される
 // keyはストレージのキー, numはストレージに格納されたデータの要素番号
-var delPlan = function(c){
+const delPlan = function(c) {
   c = c.split("-");
   var key = c[0];
   var num = c[1];
@@ -116,22 +117,18 @@ var delPlan = function(c){
   var data = storage.getItem(key);
   data = data.split(",");
 
-  if(!confirm(key + "の予定: " + data[num] + "を削除しますか?")){
-    return;
-  }
+  if (!confirm(key + "の予定: " + data[num] + "を削除しますか?")) return;
+  
   var new_data = "";
-  for(var i in data){
-    if(i == num) continue;
-    if(new_data == ""){
-      new_data = data[i];
-    }else {
-      new_data += "," + data[i];
-    }
+
+  for (let i in data) {
+    if (i == num) continue;
+    new_data = (new_data == "") ? data[i] : new_data + "," + data[i];
   }
 
-  if(new_data == ""){
+  if (new_data == "") {
     storage.removeItem(key);
-  }else {
+  } else {
     storage.setItem(key, new_data);
   }
   checked = {};
@@ -141,26 +138,22 @@ var delPlan = function(c){
 // addPlan()
 // addPlanDateの値によって作成されたkeyを用いてストレージに予定を追加
 // 予定は "," 区切りで格納される
-var addPlan = function(){
+const addPlan = function() {
   var year = date.getFullYear();
   var month = date.getMonth() + 1;
   var d = addPlanDate;
 
-  if(d == null) return ;
+  if (d == null) return;
 
   var key = year + "." + month + "." + d;
   var plan = Lib.getValue("input_plan");
 	var from = Lib.getValue("from_time");
 	var to = Lib.getValue("to_time");
 	
-	if(!(from == "" && to == "")) plan = from + "-" + to + " " + plan;
-  if(plan != "" && plan != null){
-    var data = storage.getItem(key);
-    if(data != "" && data != null){
-      data += "," + plan;
-    }else {
-      data = plan;
-    }
+	if (!(from == "" && to == "")) plan = from + "-" + to + " " + plan;
+  if (plan != "" && plan != null) {
+    let data = storage.getItem(key);
+    data = (data != "" && data != null) ? data + "," + plan : plan;
     storage.setItem(key, data);
     alert("予定を追加しました");
   }
@@ -168,26 +161,26 @@ var addPlan = function(){
   showCalendar();
 };
 
-var showInputArea = function(d){
+const showInputArea = function(d) {
   addPlanDate = d;
   document.getElementById("add_plan_date").innerHTML = date.getFullYear() + "年"
                                                       +(date.getMonth()+1) + "月"
                                                       +d+"日>";
   Lib.show("input_plan_area");
   document.getElementById("content").style.top = "380px";
-}
+};
 
-var hideInputArea = function(){
+const hideInputArea = function() {
   addDate = null;
   Lib.setValue("input_plan", "");
   Lib.hide("input_plan_area");
   document.getElementById("content").style.top = "120px";
-}
+};
 
 // toggleCheck(key)
 // key : 連想配列のキー
 // checked[key] のフラグを反転
-var toggleCheck = function(key){
+const toggleCheck = function(key) {
   checked[key] = ~checked[key];
   console.log(checked[key]);
   console.log(JSON.stringify(checked, null, '\t'));
@@ -195,43 +188,41 @@ var toggleCheck = function(key){
 
 // showCalendar()
 // DOMのdiv#contentにカレンダーを表示
-var showCalendar = function(){
-  switch(calendar_style){
-  case null:
-    storage.setItem("calendar_style", "list");
-  case "list":
-    Lib.hide("monthly");
-    Lib.hide("detail");
-    Lib.show("list");
-    showListCalnedar();
-    break;
-  case "monthly":
-    Lib.hide("list");
-    Lib.show("monthly");
-    Lib.show("detail");
-    showMonthlyCalendar();
-    break;
+const showCalendar = function() {
+  switch (calendar_style) {
+    case null:
+      storage.setItem("calendar_style", "list");
+    case "list":
+      Lib.hide("monthly");
+      Lib.hide("detail");
+      Lib.show("list");
+      showListCalnedar();
+      break;
+    case "monthly":
+      Lib.hide("list");
+      Lib.show("monthly");
+      Lib.show("detail");
+      showMonthlyCalendar();
+      break;
   }
 };
 
-var showListCalnedar = function(){
+const showListCalnedar = function() {
   var list = document.getElementById("list");
   var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
   list.innerHTML = "";
   Lib.setValue("month", (d.getMonth() + 1) + "月");
 
-  for(var i = 0, sd = new Date(date.getFullYear(), date.getMonth(), 1); i < d.getDate(); i++, sd.setDate(sd.getDate()+1)){
+  for (let i = 0, sd = new Date(date.getFullYear(), date.getMonth(), 1); i < d.getDate(); i++, sd.setDate(sd.getDate()+1)) {
     var listData = "<div class='li'>" + (i + 1) + " (" + weekStr[sd.getDay() % 7] + ")";
     var data = storage.getItem(makeKey(sd));
-    if(data != null){
+    if (data != null) {
       data = data.split(",");
-      for(var s in data){
-        if(data[s] == "") continue;
+      for (let s in data) {
+        if (data[s] == "") continue;
         var key = makeKey(sd) + "-" + s;
-        if(!(key in checked)){
-          checked[key] = -1;
-        }
+        if (!(key in checked)) checked[key] = -1;
         listData += "<div class='plan'><input class='btn' onclick='toggleCheck(\""+ key +"\")' type='checkbox'" + (checked[key] == -1 ? "checked" : "") + ">"
                   + "<div onclick='delPlan(\"" + makeKey(sd) + "-" + s + "\")'>" + data[s] + "</div></div>";
 
@@ -242,8 +233,8 @@ var showListCalnedar = function(){
   }
 };
 
-var showMonthlyCalendar = function(){
-  var monthly = document.getElementById("monthly");
+const showMonthlyCalendar = function() {
+  const monthly = document.getElementById("monthly");
   var d = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
   monthly.innerHTML = "";
@@ -252,30 +243,26 @@ var showMonthlyCalendar = function(){
   var sd = new Date(date.getFullYear(), date.getMonth(), 1);
   var day = sd.getDay();
 
-  for(var i = 0; i < day; i++){
-    monthly.innerHTML += "<div class='li'></div>";
-  }
+  for (let i = 0; i < day; i++) monthly.innerHTML += "<div class='li'></div>";
 
-  for(var i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)){
+  for (let i = 0; i < d.getDate(); i++, sd.setDate(sd.getDate() + 1)) {
     monthly.innerHTML += "<div class='li' onclick='showDetail(\"" + makeKey(sd) + "\")'>" + (i + 1) + "</div>";
-    if(weekStr[sd.getDay()] == "土"){ monthly.innerHTML += "</br>"; }
+    if (weekStr[sd.getDay()] == "土") monthly.innerHTML += "</br>";
   }
 
 };
 
-var showDetail = function(k){
-  var detail = document.getElementById("detail");
+const showDetail = function(k) {
+  const detail = document.getElementById("detail");
   var listData = "<div class='li'>";
   var d = (k.split("."))[2];
   var data = storage.getItem(k);
-  if(data != null){
+  if (data != null) {
     data = data.split(",");
-    for(var s in data){
-      if(data[s] == "") continue;
+    for (let s in data) {
+      if (data[s] == "") continue;
       var key = k + "-" + s;
-      if(!(key in checked)){
-        checked[key] = -1;
-      }
+      if (!(key in checked)) checked[key] = -1;
       listData += "<div class='plan'><input class='btn' onclick='toggleCheck(\""+ key +"\")' type='checkbox'" + (checked[key] == -1 ? "checked" : "") + ">"
                 + "<div onclick='delPlan(\"" + key + "\")'>" + data[s] + "</div></div>";
 
@@ -286,24 +273,24 @@ var showDetail = function(k){
 
 };
 
-document.getElementById("prev").onclick = function(){
+document.getElementById("prev").addEventListener("click", () => {
   date.setMonth(date.getMonth() - 1);
   showCalendar();
-};
+});
 
-document.getElementById("next").onclick = function(){
+document.getElementById("next").addEventListener("click", () => {
   date.setMonth(date.getMonth() + 1);
   showCalendar();
-};
+});
 
-document.getElementById("month").onclick = function(){
-  var m = prompt(date.getFullYear() + "年 何月を表示しますか?", date.getMonth() + 1);
+document.getElementById("month").addEventListener("click", () => {
+  const m = prompt(date.getFullYear() + "年 何月を表示しますか?", date.getMonth() + 1);
   date.setMonth(m - 1);
   showCalendar();
-};
+});
 
 // 予定をLINEで送る
-document.getElementById("line").onclick = function(){
+document.getElementById("line").addEventListener("click", () => {
   var username = storage.getItem("username");
   // ✔のついた予定を取り出す
   var file = '<h2>' + username + ' の ' +
@@ -311,59 +298,60 @@ document.getElementById("line").onclick = function(){
              (date.getMonth() + 1) + '月 予定</h2>';
 
   file += '<div id="list">';
-  for(var j = 1, sd = new Date(date.getFullYear(), date.getMonth(), 1);
+  
+  for (let j = 1, sd = new Date(date.getFullYear(), date.getMonth(), 1);
         j <= new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-        j++, sd.setDate(sd.getDate() + 1)){
-      var key = makeKey(sd);
-      var data = storage.getItem(key);
+        j++, sd.setDate(sd.getDate() + 1)) {
+      let key = makeKey(sd);
+      let data = storage.getItem(key);
+      
       file += "<div class='li'>" + j + " (" + weekStr[sd.getDate() % 7] + ")";
-      if(data != null){
+      
+      if (data != null) {
         data = data.split(",");
-        for(k in data){
-          if(checked[(key + "-" + k)] == -1){
+        for (k in data)
+          if (checked[(key + "-" + k)] == -1)
             file += "<div class='plan'>" + data[k] + "</div>";
-          }
-        }
       }
       file += "</div>"
-
   }
 
   Lib.hide("content");
   Lib.show("image");
+  
   document.getElementById("image").innerHTML = file;
+  
   html2canvas(document.getElementById("image")).then(canvas => {
-    var data = canvas.toDataURL();
+    const data = canvas.toDataURL();
     document.getElementById("image").innerHTML = "画像を保存してください<br>" +
               "<input type='button' value='閉じる' onclick='showContent()'>" +
               "<img width='360' src='" + data + "'>";
   });
 
-};
+});
 
-document.getElementById("submit").onclick = function(){
+document.getElementById("submit").addEventListener("click", () => {
   addPlan();
   hideInputArea();
-};
+});
 
-document.getElementById("cancel").onclick = function(){
+document.getElementById("cancel").addEventListener("click", () => {
   Lib.setValue("input_plan", "");
   hideInputArea();
-};
+});
 
-document.getElementById("username_submit").onclick = function(){
-  var login = Lib.getValue("username");
+document.getElementById("username_submit").addEventListener("click", () => {
+  const login = Lib.getValue("username");
   if(login == "" || login == null) alert("名前を入力してください");
   else {
-
     storage.setItem("username", login);
 
     Lib.hide("login");
     Lib.show("content");
   }
-};
+});
 
-document.getElementById("config").onclick = function(){
+document.getElementById("config").addEventListener("click", () => {
   Lib.setValue("config_page_username", storage.getItem("username"));
   // 表示、非表示
   Lib.hide("content");
@@ -371,44 +359,46 @@ document.getElementById("config").onclick = function(){
   Lib.hide("image");
   hideInputArea();
   Lib.show("config_page");
-};
+});
 
-document.getElementById("config_page_close").onclick = function(){
+document.getElementById("config_page_close").addEventListener("click", () => {
   Lib.hide("config_page");
   Lib.show("content");
-};
+});
 
-document.getElementById("config_page_all_delete").onclick = function(){
-  var username = storage.getItem("username");
+document.getElementById("config_page_all_delete").addEventListener("click", () => {
+  const username = storage.getItem("username");
   storage.clear();
   storage.setItem("username", username);
   showCalendar();
-};
+});
 
-document.getElementById("config_page_change_username").onclick = function(){
-  var username = Lib.getValue("config_page_username");
-  if(storage.getItem("username") != username){
-    if(username != "" && username != null){
-      if(confirm("ユーザー名を" + username + "に変更しますか?")){
+document.getElementById("config_page_change_username").addEventListener("click", () => {
+  const username = Lib.getValue("config_page_username");
+  if (storage.getItem("username") != username) {
+    if (username != "" && username != null) {
+      if (confirm("ユーザー名を" + username + "に変更しますか?")) {
         storage.setItem("username", username);
       }
     }
   }
-}
+});
 
-document.getElementById("config_page_calendar_style").onclick = function(){
+document.getElementById("config_page_calendar_style").addEventListener("click", () => {
   var style = Lib.getValue("config_page_calendar_style");
 
-  if(style == "月表示にする(現在リスト表示)"){
+  if (style == "月表示にする(現在リスト表示)") {
     calendar_style = "monthly";
     Lib.setValue("config_page_calendar_style", "リスト表示にする(現在月表示)");
-  }else {
+  } else {
     calendar_style = "list";
     Lib.setValue("config_page_calendar_style", "月表示にする(現在リスト表示)");
   }
+
   storage.setItem("calendar_style", calendar_style);
   showCalendar();
-}
+});
+
 showCalendar();
 
 </script>
