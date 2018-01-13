@@ -298,6 +298,7 @@ document.getElementById("line").onclick = function(){
              (date.getMonth() + 1) + '月 予定</h2>';
 
   file += '<div id="list">';
+  
   for (let j = 1, sd = new Date(date.getFullYear(), date.getMonth(), 1);
         j <= new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
         j++, sd.setDate(sd.getDate() + 1)) {
@@ -305,7 +306,8 @@ document.getElementById("line").onclick = function(){
       let data = storage.getItem(key);
       
       file += "<div class='li'>" + j + " (" + weekStr[sd.getDate() % 7] + ")";
-      if(data != null){
+      
+      if (data != null) {
         data = data.split(",");
         for (k in data)
           if (checked[(key + "-" + k)] == -1)
