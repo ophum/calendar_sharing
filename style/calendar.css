@@ -135,6 +135,18 @@
   display: none;
 }
 
+#time{
+	width: 100%;
+	height: auto;
+	font-size: 24px;
+}
+
+#time input[type="text"]{
+	width: 48px;
+	height: auto;
+	font-size: 24px;
+}
+
 #input_plan_area textarea{
   width: 100%;
   height: 120px;

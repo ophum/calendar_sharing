@@ -21,6 +21,10 @@
 
   <div id="input_plan_area">
     <div id="add_plan_date"></div>
+		<div id="time">時間:
+			<input type="text" id="from_time">-
+			<input type="text" id="to_time">
+		</div>
     <textarea id="input_plan"></textarea>
     <div class="buttons">
       <input type="button" id="submit" value="追加">
@@ -146,6 +150,10 @@ var addPlan = function(){
 
   var key = year + "." + month + "." + d;
   var plan = Lib.getValue("input_plan");
+	var from = Lib.getValue("from_time");
+	var to = Lib.getValue("to_time");
+	
+	if(!(from == "" && to == "")) plan = from + "-" + to + " " + plan;
   if(plan != "" && plan != null){
     var data = storage.getItem(key);
     if(data != "" && data != null){
